@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
-import MenuSistema from "../../MenuSistema";
+import { Link } from "react-router-dom";
 import InputMask from "comigo-tech-react-input-mask";
+import MenuSistema from "../../components/MenuSistema";
 
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 
@@ -93,17 +94,21 @@ export default function FormCliente() {
               </Form.Group>
             </Form>
             <div style={{ marginTop: "4%" }}>
-              <Button
-                type="button"
-                inverted
-                circular
-                icon
-                labelPosition="left"
-                color="orange"
+              <Link
+                to={"/list-cliente"}
               >
-                <Icon name="reply" />
-                Voltar
-              </Button>
+                <Button
+                  type="button"
+                  inverted
+                  circular
+                  icon
+                  labelPosition="left"
+                  color="orange"
+                >
+                  <Icon name="reply" />
+                  Voltar
+                </Button>
+              </Link>
               <Button
                 inverted
                 circular
