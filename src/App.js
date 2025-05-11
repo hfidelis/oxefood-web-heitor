@@ -1,5 +1,5 @@
 import "./App.css";
-import Rotas from './Rotas';
+import Rotas from './routes/Rotas';
 
 import { Segment } from "semantic-ui-react";
 
