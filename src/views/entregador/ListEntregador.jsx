@@ -263,6 +263,19 @@ export default function ListEntregador() {
                                     readonly
                                   />
                                 </Form.Group>
+
+                                <Form.Group
+                                  widths="equal"
+                                >
+                                  <Form.TextArea
+                                    fluid
+                                    label="Complemento"
+                                    value={
+                                      currentEntregador.enderecoComplemento || "-"
+                                    }
+                                    readonly
+                                  />
+                                </Form.Group>
                               </Form>
                             </div>
                           </ModalDescription>
