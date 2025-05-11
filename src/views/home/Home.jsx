@@ -1,5 +1,5 @@
 import React from "react";
-import MenuSistema from "../../MenuSistema";
+import MenuSistema from "../../components/MenuSistema";
 
 import { Container, Grid, Image } from "semantic-ui-react";
 
