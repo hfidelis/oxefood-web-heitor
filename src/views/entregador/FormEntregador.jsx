@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
-import MenuSistema from "../../MenuSistema";
+import { Link } from "react-router-dom";
 import InputMask from "comigo-tech-react-input-mask";
+import MenuSistema from "../../components/MenuSistema";
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 
 export default function FormEntregador() {
@@ -20,7 +21,6 @@ export default function FormEntregador() {
   const [enderecoCidade, setEnderecoCidade] = useState("");
   const [enderecoCep, setEnderecoCep] = useState("");
   const [enderecoUf, setEnderecoUf] = useState("");
-  const [ativo, setAtivo] = useState(true);
 
   function salvar() {
     const entregadorRequest = {
@@ -39,7 +39,6 @@ export default function FormEntregador() {
       enderecoCidade: enderecoCidade,
       enderecoCep: enderecoCep,
       enderecoUf: enderecoUf,
-      ativo: ativo,
     };
 
     axios
@@ -190,28 +189,24 @@ export default function FormEntregador() {
                   onChange={(e) => setEnderecoUf(e.target.value.toUpperCase())}
                 />
               </Form.Group>
-
-              <Form.Group>
-                <Form.Checkbox
-                  label="Ativo"
-                  checked={ativo}
-                  onChange={() => setAtivo(!ativo)}
-                />
-              </Form.Group>
             </Form>
 
             <div style={{ marginTop: "4%" }}>
-              <Button
-                type="button"
-                inverted
-                circular
-                icon
-                labelPosition="left"
-                color="orange"
+              <Link
+                to={"/list-entregador"}
               >
-                <Icon name="reply" />
-                Voltar
-              </Button>
+                <Button
+                  type="button"
+                  inverted
+                  circular
+                  icon
+                  labelPosition="left"
+                  color="orange"
+                >
+                  <Icon name="reply" />
+                  Voltar
+                </Button>
+              </Link>
               <Button
                 inverted
                 circular
