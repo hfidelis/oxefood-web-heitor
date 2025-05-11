@@ -18,24 +18,24 @@ export default function Home() {
               <Grid.Column>
                 Bem vindo ao sistema <strong>OxeFood</strong> ! <br />
                 Este sistema foi desenvolvido na disciplina de Desenvolvimento
-                para WEB III. <br /> <br />
+                para WEB IV. <br /> <br />
                 Para acessar o código da <strong>API</strong> do sistema,
-                acesse:{" "}
+                acesse:
+                <br />
                 <a
-                  href="https://github.com/robertoalencar/oxefood-api"
+                  href="https://github.com/hfidelis/oxefood-api-heitor"
                   target="_blank"
                 >
-                  {" "}
-                  https://github.com/robertoalencar/oxefood-api{" "}
+                  https://github.com/hfidelis/oxefood-api-heitor
                 </a>{" "}
                 <br /> <br />
-                Para acessar o código do <strong>Módulo WEB</strong>, acesse:{" "}
+                Para acessar o código do <strong>Módulo WEB</strong>, acesse:
+                <br />
                 <a
-                  href="https://github.com/robertoalencar/oxefood-web"
+                  href="https://github.com/hfidelis/oxefood-web-heitor"
                   target="_blank"
                 >
-                  {" "}
-                  https://github.com/robertoalencar/oxefood-web{" "}
+                  https://github.com/hfidelis/oxefood-web-heitor
                 </a>
               </Grid.Column>
             </Grid.Row>
