@@ -1,31 +1,33 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MenuSistema from "../../components/MenuSistema";
 
+import { Link } from "react-router-dom";
 import {
   Button,
   Container,
   Divider,
-  Icon,
-  Table,
-  Modal,
   Form,
-  ModalHeader,
+  Header,
+  Icon,
+  Modal,
   ModalActions,
   ModalContent,
   ModalDescription,
+  ModalHeader,
+  Table,
 } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 
-import truncate from "../utils/truncate";
-import toCurrency from "../utils/toCurrency";
-import formatDate from "../utils/formatDate";
+import formatDate from "../../utils/formatDate";
+import toCurrency from "../../utils/toCurrency";
+import truncate from "../../utils/truncate";
 
 export default function ListEntregador() {
   const [lista, setLista] = useState([]);
-
   const [open, setOpen] = useState(false);
   const [currentEntregador, setCurrentEntregador] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [idRemover, setIdRemover] = useState();
 
   useEffect(() => {
     carregarLista();
@@ -40,6 +42,27 @@ export default function ListEntregador() {
   function handleModal(open, entregador) {
     setOpen(open);
     setCurrentEntregador(entregador);
+  }
+  
+  function confirmaRemover(id) {
+    setOpenModal(true)
+    setIdRemover(id)
+  }
+
+  async function remover() {
+    await axios.delete('http://localhost:8080/api/entregador/' + idRemover)
+    .then((response) => {
+      window.alert('Entregador removido com sucesso.')
+
+      axios.get("http://localhost:8080/api/entregador")
+      .then((response) => {
+          setLista(response.data)
+      })
+    })
+    .catch((error) => {
+        window.alert('Erro ao remover um entregador.')
+    })
+    setOpenModal(false)
   }
 
   return (
@@ -130,7 +153,7 @@ export default function ListEntregador() {
                                     label="Nome"
                                     maxLength="100"
                                     value={currentEntregador.nome || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -138,7 +161,7 @@ export default function ListEntregador() {
                                     label="CPF"
                                     maxLength="100"
                                     value={currentEntregador.cpf || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -146,7 +169,7 @@ export default function ListEntregador() {
                                     label="RG"
                                     maxLength="100"
                                     value={currentEntregador.rg || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -154,7 +177,7 @@ export default function ListEntregador() {
                                     label="Data de Nascimento"
                                     maxLength="100"
                                     value={formatDate(currentEntregador.dataNascimento) || "-"}
-                                    readonly
+                                    readOnly
                                   />
                                 </Form.Group>
 
@@ -166,7 +189,7 @@ export default function ListEntregador() {
                                     label="Fone Celular"
                                     maxLength="100"
                                     value={currentEntregador.foneCelular || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -174,7 +197,7 @@ export default function ListEntregador() {
                                     label="Fone Fixo"
                                     maxLength="100"
                                     value={currentEntregador.foneFixo || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -182,7 +205,7 @@ export default function ListEntregador() {
                                     label="Valor Frete"
                                     maxLength="100"
                                     value={toCurrency(currentEntregador.valorFrete) || "-"}
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -192,7 +215,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.qtdEntregasRealizadas || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
                                 </Form.Group>
 
@@ -206,7 +229,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoRua || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -216,7 +239,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoNumero || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -226,7 +249,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoBairro || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
                                 </Form.Group>
 
@@ -240,7 +263,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoCidade || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -250,7 +273,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoUf || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
 
                                   <Form.Input
@@ -260,7 +283,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoCep || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
                                 </Form.Group>
 
@@ -273,7 +296,7 @@ export default function ListEntregador() {
                                     value={
                                       currentEntregador.enderecoComplemento || "-"
                                     }
-                                    readonly
+                                    readOnly
                                   />
                                 </Form.Group>
                               </Form>
@@ -301,11 +324,23 @@ export default function ListEntregador() {
                       <Button
                         inverted
                         circular
-                        color="green"
-                        title="Clique aqui para editar os dados deste entregador"
+                        color='green'
+                        title='Clique aqui para editar os dados deste entregador'
                         icon
                       >
-                        <Icon name="edit" />
+                        <Link
+                          to="/form-entregador" 
+                          state={{
+                              id: entregador.id
+                          }}
+                          style={{
+                            color: 'green'
+                          }}
+                        >
+                          <Icon 
+                            name='edit' 
+                          />
+                        </Link>
                       </Button>
 
                       <Button
@@ -314,6 +349,7 @@ export default function ListEntregador() {
                         color="red"
                         title="Clique aqui para remover este entregador"
                         icon
+                        onClick={() => confirmaRemover(entregador.id)}
                       >
                         <Icon name="trash" />
                       </Button>
@@ -322,9 +358,47 @@ export default function ListEntregador() {
                 ))}
               </Table.Body>
             </Table>
+            {lista.length === 0 && (                  
+              <div
+                style={{
+                  minWidth: '100%',
+                  textAlign: 'center',
+                  fontWeight: 'bold'
+                }}
+              >
+                <span>
+                  Nenhum entregador cadastrado.
+                </span>
+              </div>
+            )}
           </div>
         </Container>
       </div>
+      <Modal
+        basic
+        onClose={() => setOpenModal(false)}
+        onOpen={() => setOpenModal(true)}
+        open={openModal}
+      >
+        <Header icon>
+            <Icon name='trash' />
+            <div style={{marginTop: '5%'}}> Tem certeza que deseja remover esse registro? </div>
+        </Header>
+        <Modal.Actions
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Button basic color='red' inverted onClick={() => setOpenModal(false)}>
+              <Icon name='remove' /> Não
+          </Button>
+          <Button color='green' inverted onClick={() => remover()}>
+              <Icon name='checkmark' /> Sim
+          </Button>
+        </Modal.Actions>
+      </Modal>
     </div>
   );
 }
