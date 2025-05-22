@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import MenuSistema from "../../components/MenuSistema";
 
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
@@ -13,6 +13,9 @@ export default function FormProduto() {
   const [tempoEntregaMinimo, setTempoEntregaMinimo] = useState("");
   const [tempoEntregaMaximo, setTempoEntregaMaximo] = useState("");
 
+  const { state } = useLocation();
+  const [idProduto, setidProduto] = useState();
+
   function salvar() {
     const produtoRequest = {
       codigo: codigo,
@@ -23,15 +26,39 @@ export default function FormProduto() {
       tempoEntregaMaximo: parseInt(tempoEntregaMaximo, 10),
     };
 
-    axios
-      .post("http://localhost:8080/api/produto", produtoRequest)
-      .then((response) => {
-        console.log("Produto cadastrado com sucesso.");
-      })
-      .catch((error) => {
-        console.log("Erro ao incluir o produto.");
-      });
+    if (idProduto != null) {
+        axios.put("http://localhost:8080/api/produto/" + idProduto, produtoRequest)
+          .then((response) => {
+              window.alert('Produto alterado com sucesso.')
+          })
+          .catch((error) => {
+            window.alert('Erro ao alterar produto.')
+          })
+      } else {
+        axios.post("http://localhost:8080/api/produto", produtoRequest)
+          .then((response) => {
+              window.alert('Produto cadastrado com sucesso.')
+          })
+          .catch((error) => {
+            window.alert('Erro ao incluir o produto.')
+          })
+      }
   }
+
+  useEffect(() => {
+    if (state != null && state.id != null) {
+      axios.get("http://localhost:8080/api/produto/" + state.id)
+        .then((response) => {
+          setidProduto(response.data.id)
+          setCodigo(response.data.codigo)
+          setTitulo(response.data.titulo)
+          setDescricao(response.data.descricao)
+          setValorUnitario(response.data.valorUnitario)
+          setTempoEntregaMinimo(response.data.tempoEntregaMinimo)
+          setTempoEntregaMaximo(response.data.tempoEntregaMaximo)
+        })
+    }
+  }, [state])
 
   return (
     <div>
