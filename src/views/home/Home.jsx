@@ -1,4 +1,3 @@
-import React from "react";
 import MenuSistema from "../../components/MenuSistema";
 
 import { Container, Grid, Image } from "semantic-ui-react";
@@ -25,6 +24,7 @@ export default function Home() {
                 <a
                   href="https://github.com/hfidelis/oxefood-api-heitor"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   https://github.com/hfidelis/oxefood-api-heitor
                 </a>{" "}
@@ -34,6 +34,7 @@ export default function Home() {
                 <a
                   href="https://github.com/hfidelis/oxefood-web-heitor"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   https://github.com/hfidelis/oxefood-web-heitor
                 </a>
