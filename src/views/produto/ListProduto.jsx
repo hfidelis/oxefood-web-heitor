@@ -71,6 +71,9 @@ export default function ListProduto() {
                     Código
                   </Table.HeaderCell>
                   <Table.HeaderCell>
+                    Categoria
+                  </Table.HeaderCell>
+                  <Table.HeaderCell>
                     Título
                   </Table.HeaderCell>
                   <Table.HeaderCell>
@@ -96,6 +99,9 @@ export default function ListProduto() {
                   <Table.Row key={produto.id}>
                     <Table.Cell>
                       {produto.codigo || '-'}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {produto.categoria.descricao || '-'}
                     </Table.Cell>
                     <Table.Cell>
                       {truncate(produto.titulo, 40) || '-'}

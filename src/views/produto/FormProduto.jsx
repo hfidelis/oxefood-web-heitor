@@ -12,12 +12,15 @@ export default function FormProduto() {
   const [valorUnitario, setValorUnitario] = useState("");
   const [tempoEntregaMinimo, setTempoEntregaMinimo] = useState("");
   const [tempoEntregaMaximo, setTempoEntregaMaximo] = useState("");
+  const [listaCategoria, setListaCategoria] = useState([]);
+  const [idCategoria, setIdCategoria] = useState();
 
   const { state } = useLocation();
   const [idProduto, setidProduto] = useState();
 
   function salvar() {
     const produtoRequest = {
+      idCategoria: idCategoria, 
       codigo: codigo,
       titulo: titulo,
       descricao: descricao,
@@ -56,8 +59,15 @@ export default function FormProduto() {
           setValorUnitario(response.data.valorUnitario)
           setTempoEntregaMinimo(response.data.tempoEntregaMinimo)
           setTempoEntregaMaximo(response.data.tempoEntregaMaximo)
-        })
+          setIdCategoria(response.data.categoria.id)
+        })        
     }
+
+    axios.get("http://localhost:8080/api/categoria-produto")
+      .then((response) => {
+          const dropDownCategorias = response.data.map(c => ({ text: c.descricao, value: c.id }));
+          setListaCategoria(dropDownCategorias);
+      })
   }, [state])
 
   return (
@@ -92,6 +102,18 @@ export default function FormProduto() {
                   maxLength="100"
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
+                />
+                <Form.Select
+                  required
+                  fluid
+                  tabIndex='3'
+                  placeholder='Selecione'
+                  label='Categoria'
+                  options={listaCategoria}
+                  value={idCategoria}
+                  onChange={(e,{value}) => {
+                    setIdCategoria(value)
+                  }}
                 />
               </Form.Group>
               <Form.TextArea
