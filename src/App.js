@@ -1,10 +1,14 @@
 import Rotas from './routes/Rotas';
 
+import { ToastContainer } from 'react-toastify';
 import { Segment } from "semantic-ui-react";
+
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
     <div className="App">
+      <ToastContainer />
       <Rotas />
 
       <div style={{ marginTop: "6%" }}>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table } from 'semantic-ui-react';
 import MenuSistema from '../../components/MenuSistema';
+import notify from '../../utils/toast';
 
 export default function ListCategoriaProduto() {
     const [lista, setLista] = useState([]);
@@ -20,16 +21,22 @@ export default function ListCategoriaProduto() {
                 setLista(response.data)
             })
             .catch((error) => {
-                window.alert("Erro ao carregar a lista.")
+                if (error.response.data.errors != undefined) {
+                    for (let i = 0; i < error.response.data.errors.length; i++) {
+                        notify.error(error.response.data.errors[i].defaultMessage)
+                    }
+                } else {
+                    notify.error(error.response.data.message)
+                }
             })
     }
 
     async function remover() {
 
         await axios.delete('http://localhost:8080/api/categoria-produto/' + idRemover)
-            .then((response) => {
+            .then(() => {
 
-                window.alert('Categoria removida com sucesso.')
+                notify.success('Categoria removida com sucesso.')
 
                 axios.get("http://localhost:8080/api/categoria-produto")
                     .then((response) => {
@@ -37,7 +44,13 @@ export default function ListCategoriaProduto() {
                     })
             })
             .catch((error) => {
-                window.alert('Erro ao remover uma categoria.')
+                if (error.response.data.errors != undefined) {
+                    for (let i = 0; i < error.response.data.errors.length; i++) {
+                        notify.error(error.response.data.errors[i].defaultMessage)
+                    }
+                } else {
+                    notify.error(error.response.data.message)
+                }
             })
         setOpenModal(false)
     }

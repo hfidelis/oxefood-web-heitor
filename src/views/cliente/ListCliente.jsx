@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table } from "semantic-ui-react";
 
 import formatDate from '../../utils/formatDate';
+import notify from "../../utils/toast";
 
 export default function ListCliente() {
   const [lista, setLista] = useState([]);
@@ -29,17 +30,23 @@ export default function ListCliente() {
 
   async function remover() {
     await axios.delete('http://localhost:8080/api/cliente/' + idRemover)
-    .then((response) => {
-      window.alert('Cliente removido com sucesso.')
+      .then(() => {
+        notify.success('Cliente removido com sucesso.')
 
-      axios.get("http://localhost:8080/api/cliente")
-      .then((response) => {
-          setLista(response.data)
+        axios.get("http://localhost:8080/api/cliente")
+          .then((response) => {
+            setLista(response.data)
+          })
       })
-    })
-    .catch((error) => {
-        window.alert('Erro ao remover um cliente.')
-    })
+      .catch((error) => {
+        if (error.response.data.errors != undefined) {
+          for (let i = 0; i < error.response.data.errors.length; i++) {
+            notify.error(error.response.data.errors[i].defaultMessage)
+          }
+        } else {
+          notify.error(error.response.data.message)
+        }
+      })
     setOpenModal(false)
   }
 
@@ -86,7 +93,7 @@ export default function ListCliente() {
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
-              
+
               <Table.Body>
                 {lista.map((cliente) => (
                   <Table.Row key={cliente.id}>
@@ -114,16 +121,16 @@ export default function ListCliente() {
                         icon
                       >
                         <Link
-                          to="/form-cliente" 
+                          to="/form-cliente"
                           state={{
-                              id: cliente.id
+                            id: cliente.id
                           }}
                           style={{
                             color: 'green'
                           }}
                         >
-                          <Icon 
-                            name='edit' 
+                          <Icon
+                            name='edit'
                           />
                         </Link>
                       </Button>
@@ -140,10 +147,10 @@ export default function ListCliente() {
                       </Button>
                     </Table.Cell>
                   </Table.Row>
-                ))}                
+                ))}
               </Table.Body>
             </Table>
-            {lista.length === 0 && (                  
+            {lista.length === 0 && (
               <div
                 style={{
                   minWidth: '100%',
@@ -166,8 +173,8 @@ export default function ListCliente() {
         open={openModal}
       >
         <Header icon>
-            <Icon name='trash' />
-            <div style={{marginTop: '5%'}}> Tem certeza que deseja remover esse registro? </div>
+          <Icon name='trash' />
+          <div style={{ marginTop: '5%' }}> Tem certeza que deseja remover esse registro? </div>
         </Header>
         <Modal.Actions
           style={{
@@ -177,10 +184,10 @@ export default function ListCliente() {
           }}
         >
           <Button basic color='red' inverted onClick={() => setOpenModal(false)}>
-              <Icon name='remove' /> Não
+            <Icon name='remove' /> Não
           </Button>
           <Button color='green' inverted onClick={() => remover()}>
-              <Icon name='checkmark' /> Sim
+            <Icon name='checkmark' /> Sim
           </Button>
         </Modal.Actions>
       </Modal>

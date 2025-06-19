@@ -5,6 +5,7 @@ import MenuSistema from "../../components/MenuSistema";
 import { Link } from "react-router-dom";
 import { Button, Container, Divider, Header, Icon, Modal, Table } from "semantic-ui-react";
 
+import notify from "../../utils/toast";
 import toCurrency from '../../utils/toCurrency';
 import truncate from '../../utils/truncate';
 
@@ -30,17 +31,23 @@ export default function ListProduto() {
 
   async function remover() {
     await axios.delete('http://localhost:8080/api/produto/' + idRemover)
-    .then((response) => {
-      window.alert('Produto removido com sucesso.')
+      .then(() => {
+        notify.success('Produto removido com sucesso.')
 
-      axios.get("http://localhost:8080/api/produto")
-      .then((response) => {
-          setLista(response.data)
+        axios.get("http://localhost:8080/api/produto")
+          .then((response) => {
+            setLista(response.data)
+          })
       })
-    })
-    .catch((error) => {
-        window.alert('Erro ao remover um produto.')
-    })
+      .catch((error) => {
+        if (error.response.data.errors != undefined) {
+          for (let i = 0; i < error.response.data.errors.length; i++) {
+            notify.error(error.response.data.errors[i].defaultMessage)
+          }
+        } else {
+          notify.error(error.response.data.message)
+        }
+      })
     setOpenModal(false)
   }
 
@@ -127,16 +134,16 @@ export default function ListProduto() {
                         icon
                       >
                         <Link
-                          to="/form-produto" 
+                          to="/form-produto"
                           state={{
-                              id: produto.id
+                            id: produto.id
                           }}
                           style={{
                             color: 'green'
                           }}
                         >
-                          <Icon 
-                            name='edit' 
+                          <Icon
+                            name='edit'
                           />
                         </Link>
                       </Button>
@@ -147,7 +154,7 @@ export default function ListProduto() {
                         color="red"
                         title="Clique aqui para remover este produto"
                         icon
-                        onClick={() => {confirmaRemover(produto.id)}}
+                        onClick={() => { confirmaRemover(produto.id) }}
                       >
                         <Icon name="trash" />
                       </Button>
@@ -156,7 +163,7 @@ export default function ListProduto() {
                 ))}
               </Table.Body>
             </Table>
-            {lista.length === 0 && (                  
+            {lista.length === 0 && (
               <div
                 style={{
                   minWidth: '100%',
@@ -179,8 +186,8 @@ export default function ListProduto() {
         open={openModal}
       >
         <Header icon>
-            <Icon name='trash' />
-            <div style={{marginTop: '5%'}}> Tem certeza que deseja remover esse registro? </div>
+          <Icon name='trash' />
+          <div style={{ marginTop: '5%' }}> Tem certeza que deseja remover esse registro? </div>
         </Header>
         <Modal.Actions
           style={{
@@ -190,10 +197,10 @@ export default function ListProduto() {
           }}
         >
           <Button basic color='red' inverted onClick={() => setOpenModal(false)}>
-              <Icon name='remove' /> Não
+            <Icon name='remove' /> Não
           </Button>
           <Button color='green' inverted onClick={() => remover()}>
-              <Icon name='checkmark' /> Sim
+            <Icon name='checkmark' /> Sim
           </Button>
         </Modal.Actions>
       </Modal>

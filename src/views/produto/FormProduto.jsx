@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import MenuSistema from "../../components/MenuSistema";
 
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
+import notify from "../../utils/toast";
 
 export default function FormProduto() {
   const [codigo, setCodigo] = useState("");
@@ -20,7 +21,7 @@ export default function FormProduto() {
 
   function salvar() {
     const produtoRequest = {
-      idCategoria: idCategoria, 
+      idCategoria: idCategoria,
       codigo: codigo,
       titulo: titulo,
       descricao: descricao,
@@ -30,22 +31,34 @@ export default function FormProduto() {
     };
 
     if (idProduto != null) {
-        axios.put("http://localhost:8080/api/produto/" + idProduto, produtoRequest)
-          .then((response) => {
-              window.alert('Produto alterado com sucesso.')
-          })
-          .catch((error) => {
-            window.alert('Erro ao alterar produto.')
-          })
-      } else {
-        axios.post("http://localhost:8080/api/produto", produtoRequest)
-          .then((response) => {
-              window.alert('Produto cadastrado com sucesso.')
-          })
-          .catch((error) => {
-            window.alert('Erro ao incluir o produto.')
-          })
-      }
+      axios.put("http://localhost:8080/api/produto/" + idProduto, produtoRequest)
+        .then(() => {
+          notify.success('Produto alterado com sucesso.')
+        })
+        .catch((error) => {
+          if (error.response.data.errors != undefined) {
+            for (let i = 0; i < error.response.data.errors.length; i++) {
+              notify.error(error.response.data.errors[i].defaultMessage)
+            }
+          } else {
+            notify.error(error.response.data.message)
+          }
+        })
+    } else {
+      axios.post("http://localhost:8080/api/produto", produtoRequest)
+        .then(() => {
+          notify.success('Produto cadastrado com sucesso.')
+        })
+        .catch((error) => {
+          if (error.response.data.errors != undefined) {
+            for (let i = 0; i < error.response.data.errors.length; i++) {
+              notify.error(error.response.data.errors[i].defaultMessage)
+            }
+          } else {
+            notify.error(error.response.data.message)
+          }
+        })
+    }
   }
 
   useEffect(() => {
@@ -60,13 +73,13 @@ export default function FormProduto() {
           setTempoEntregaMinimo(response.data.tempoEntregaMinimo)
           setTempoEntregaMaximo(response.data.tempoEntregaMaximo)
           setIdCategoria(response.data.categoria.id)
-        })        
+        })
     }
 
     axios.get("http://localhost:8080/api/categoria-produto")
       .then((response) => {
-          const dropDownCategorias = response.data.map(c => ({ text: c.descricao, value: c.id }));
-          setListaCategoria(dropDownCategorias);
+        const dropDownCategorias = response.data.map(c => ({ text: c.descricao, value: c.id }));
+        setListaCategoria(dropDownCategorias);
       })
   }, [state])
 
@@ -111,7 +124,7 @@ export default function FormProduto() {
                   label='Categoria'
                   options={listaCategoria}
                   value={idCategoria}
-                  onChange={(e,{value}) => {
+                  onChange={(e, { value }) => {
                     setIdCategoria(value)
                   }}
                 />

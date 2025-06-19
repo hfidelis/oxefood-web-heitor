@@ -8,6 +8,8 @@ import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 import MenuSistema from "../../components/MenuSistema";
 import formatDate from "../../utils/formatDate";
 
+import notify from '../../utils/toast';
+
 export default function FormCliente() {
   const [nome, setNome] = useState();
   const [cpf, setCpf] = useState();
@@ -30,18 +32,30 @@ export default function FormCliente() {
     if (idCliente != null) {
         axios.put("http://localhost:8080/api/cliente/" + idCliente, clienteRequest)
           .then((response) => {
-              window.alert('Cliente alterado com sucesso.')
+              notify.success('Cliente alterado com sucesso.')
           })
           .catch((error) => {
-            window.alert('Erro ao alterar cliente.')
+            if (error.response.data.errors != undefined) {
+                  for (let i = 0; i < error.response.data.errors.length; i++) {
+                      notify.error(error.response.data.errors[i].defaultMessage)
+                  }
+              } else {
+                  notify.error(error.response.data.message)
+              }
           })
       } else {
         axios.post("http://localhost:8080/api/cliente", clienteRequest)
           .then((response) => {
-              window.alert('Cliente cadastrado com sucesso.')
+              notify.success('Cliente cadastrado com sucesso.')
           })
           .catch((error) => {
-            window.alert('Erro ao incluir o cliente.')
+            if (error.response.data.errors != undefined) {
+                  for (let i = 0; i < error.response.data.errors.length; i++) {
+                      notify.error(error.response.data.errors[i].defaultMessage)
+                  }
+              } else {
+                  notify.error(error.response.data.message)
+              }
           })
       }
   }

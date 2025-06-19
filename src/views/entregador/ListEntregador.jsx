@@ -19,6 +19,7 @@ import {
 } from "semantic-ui-react";
 
 import formatDate from "../../utils/formatDate";
+import notify from "../../utils/toast";
 import toCurrency from "../../utils/toCurrency";
 import truncate from "../../utils/truncate";
 
@@ -43,7 +44,7 @@ export default function ListEntregador() {
     setOpen(open);
     setCurrentEntregador(entregador);
   }
-  
+
   function confirmaRemover(id) {
     setOpenModal(true)
     setIdRemover(id)
@@ -51,17 +52,23 @@ export default function ListEntregador() {
 
   async function remover() {
     await axios.delete('http://localhost:8080/api/entregador/' + idRemover)
-    .then((response) => {
-      window.alert('Entregador removido com sucesso.')
+      .then(() => {
+        notify.success('Entregador removido com sucesso.')
 
-      axios.get("http://localhost:8080/api/entregador")
-      .then((response) => {
-          setLista(response.data)
+        axios.get("http://localhost:8080/api/entregador")
+          .then((response) => {
+            setLista(response.data)
+          })
       })
-    })
-    .catch((error) => {
-        window.alert('Erro ao remover um entregador.')
-    })
+      .catch((error) => {
+        if (error.response.data.errors != undefined) {
+          for (let i = 0; i < error.response.data.errors.length; i++) {
+            notify.error(error.response.data.errors[i].defaultMessage)
+          }
+        } else {
+          notify.error(error.response.data.message)
+        }
+      })
     setOpenModal(false)
   }
 
@@ -120,7 +127,7 @@ export default function ListEntregador() {
                       {toCurrency(entregador.valorFrete) || "-"}
                     </Table.Cell>
                     <Table.Cell textAlign="center">
-                    <Modal
+                      <Modal
                         onOpen={() => handleModal(true, entregador)}
                         onClose={() => handleModal(false, {})}
                         open={open}
@@ -329,16 +336,16 @@ export default function ListEntregador() {
                         icon
                       >
                         <Link
-                          to="/form-entregador" 
+                          to="/form-entregador"
                           state={{
-                              id: entregador.id
+                            id: entregador.id
                           }}
                           style={{
                             color: 'green'
                           }}
                         >
-                          <Icon 
-                            name='edit' 
+                          <Icon
+                            name='edit'
                           />
                         </Link>
                       </Button>
@@ -358,7 +365,7 @@ export default function ListEntregador() {
                 ))}
               </Table.Body>
             </Table>
-            {lista.length === 0 && (                  
+            {lista.length === 0 && (
               <div
                 style={{
                   minWidth: '100%',
@@ -381,8 +388,8 @@ export default function ListEntregador() {
         open={openModal}
       >
         <Header icon>
-            <Icon name='trash' />
-            <div style={{marginTop: '5%'}}> Tem certeza que deseja remover esse registro? </div>
+          <Icon name='trash' />
+          <div style={{ marginTop: '5%' }}> Tem certeza que deseja remover esse registro? </div>
         </Header>
         <Modal.Actions
           style={{
@@ -392,10 +399,10 @@ export default function ListEntregador() {
           }}
         >
           <Button basic color='red' inverted onClick={() => setOpenModal(false)}>
-              <Icon name='remove' /> Não
+            <Icon name='remove' /> Não
           </Button>
           <Button color='green' inverted onClick={() => remover()}>
-              <Icon name='checkmark' /> Sim
+            <Icon name='checkmark' /> Sim
           </Button>
         </Modal.Actions>
       </Modal>

@@ -4,13 +4,15 @@ import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon } from "semantic-ui-react";
 import MenuSistema from '../../components/MenuSistema';
 
-export default function FormCategoriaProduto(){
-    const[descricao, setDescricao] = useState();
+import notify from '../../utils/toast';
+
+export default function FormCategoriaProduto() {
+    const [descricao, setDescricao] = useState();
 
     const [idCategoriaProduto, setIdCategoriaProduto] = useState();
     const { state } = useLocation();
 
-        useEffect(() => {
+    useEffect(() => {
         if (state != null && state.id != null) {
             axios.get("http://localhost:8080/api/categoria-produto/" + state.id)
                 .then((response) => {
@@ -28,16 +30,30 @@ export default function FormCategoriaProduto(){
 
         if (idCategoriaProduto != null) {
             axios.put("http://localhost:8080/api/categoria-produto/" + idCategoriaProduto, categoriaRequest)
-                .then(() => { window.alert('Categoria do produto alterada com sucesso.') })
-                .catch(() => { window.alert('Erro ao alterar uma categoria.') })
+                .then(() => { notify.success('Categoria do produto alterada com sucesso.') })
+                .catch((error) => {
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notify.error(error.response.data.errors[i].defaultMessage)
+                        }
+                    } else {
+                        notify.error(error.response.data.message)
+                    }
+                })
 
         } else {
             axios.post("http://localhost:8080/api/categoria-produto", categoriaRequest)
                 .then(() => {
-                    window.alert('Categoria de produto cadastrada com sucesso.')
+                    notify.success('Categoria de produto cadastrada com sucesso.')
                 })
-                .catch(() => {
-                    window.alert("Erro ao inclui uma categoria")
+                .catch((error) => {
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notify.error(error.response.data.errors[i].defaultMessage)
+                        }
+                    } else {
+                        notify.error(error.response.data.message)
+                    }
                 })
         }
 
@@ -49,15 +65,15 @@ export default function FormCategoriaProduto(){
             <div style={{ marginTop: '3%' }}>
                 <Container textAlign='justified' >
                     {idCategoriaProduto === undefined &&
-                        <h2> 
-                            <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> 
+                        <h2>
+                            <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span>
                             <span style={{ color: 'darkgray' }}> Categoria &nbsp;<Icon name='angle double right' size="small" /> </span>
                             Cadastro
                         </h2>
                     }
                     {idCategoriaProduto !== undefined &&
-                        <h2> 
-                            <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span> 
+                        <h2>
+                            <span style={{ color: 'darkgray' }}> Produto &nbsp;<Icon name='angle double right' size="small" /> </span>
                             <span style={{ color: 'darkgray' }}> Categoria &nbsp;<Icon name='angle double right' size="small" /> </span>
                             Alteração
                         </h2>
